@@ -38,6 +38,25 @@
         }
         return true;
      }
+
+     public boolean isFull() {
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                if(grid[i][j] == ' '){
+                    return false;
+                }
+            }
+        }
+        return true;
+     }
+     public char checkWinner() {
+         for (int i = 0; i < 3; i++) {
+             if (grid[i][0] != ' ' && grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
+                 return grid[i][0];
+             }
+         }
+         return ' ';
+     }
   }
 
 

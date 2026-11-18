@@ -7,6 +7,9 @@ public class Game {
     private char currentPlayer;
     private Player playerX;
     private Player playerO;
+    private int xWins = 0;
+    private int oWins = 0;
+    private int draws = 0;
     private final Scanner scanner = new Scanner(System.in);
 
     public void start() {
@@ -24,6 +27,7 @@ public class Game {
 
 
             play();
+            printScore();
 
             System.out.print("Play again ? (yes/no): ");
             String answer = scanner.next();
@@ -53,15 +57,24 @@ public class Game {
             if(board.checkWinner() != ' ') {
                 board.print();
                 System.out.println("player " + currentPlayer + " wins!");
+                if(currentPlayer== 'X'){
+                    xWins++;
+                }else{
+                    oWins++;
+                }
                 break;
             }
                 if(board.isFull()){
                     board.print();
                     System.out.println("it's a draw!");
+                    draws++;
                     break;
                 }
                 currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         }
+    }
+    private void printScore() {
+        System.out.println("Score  ->  X: " + xWins + "  |  O: " + oWins + "  |  Draws: " + draws);
     }
 }
 

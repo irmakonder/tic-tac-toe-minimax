@@ -47,3 +47,53 @@
 .new-game-button:hover {
     -fx-background-color: #C2456F;
 }
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #D4537E;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.mode-label {
+    -fx-text-fill: #D4537E;
+    -fx-font-size: 13px;
+}
+
+.status {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #993556;
+}
+
+.board {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-padding: 14;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.cell {
+    -fx-min-width: 88px;
+    -fx-min-height: 88px;
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-background-color: #FBEAF0;
+    -fx-background-radius: 16;
+    -fx-border-color: #F4C0D1;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 16;
+    -fx-cursor: hand;
+}
+
+.cell:hover {
+    -fx-background-color: #F8DCE6;
+}
+
+.x-mark {
+    -fx-text-fill: #D4537E;
+}
+
+.o-mark {
+    -fx-text-fill: #993556;
+}

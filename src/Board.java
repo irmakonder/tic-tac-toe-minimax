@@ -68,6 +68,10 @@
          }
          return ' ';
      }
+
+     public void undoMove(int row,int col) {
+        grid [row][col] = ' ';
+     }
  }
 
 

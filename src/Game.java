@@ -12,16 +12,16 @@ public class Game {
     public void start() {
         while(true){
         System.out.println("1)two players");
-        System.out.println("2)play vs computer");
+        System.out.println("2)play vs computer (easy)");
+        System.out.println("3)play vs computer (hard)");
         System.out.println("choose mode: ");
         int mode =scanner.nextInt();
 
         playerX = new HumanPlayer(scanner);
-        if(mode == 2){
-            playerO = new RandomAI();
-        }else{
-            playerO = new HumanPlayer(scanner);
-        }
+        if(mode == 2) {playerO = new RandomAI();}
+        else if (mode == 3) {playerO = new  MinimaxAI('0');}
+        else {playerO = new HumanPlayer(scanner);}
+
 
             play();
 

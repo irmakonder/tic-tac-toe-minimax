@@ -1,12 +1,28 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.Scanner;
 
 public class Game {
     private Board board;
     private char currentPlayer;
+    private Player playerX;
+    private Player playerO;
     private final Scanner scanner = new Scanner(System.in);
 
     public void start() {
         while(true){
+        System.out.println("1)two players");
+        System.out.println("2)play vs computer");
+        System.out.println("choose mode: ");
+        int mode =scanner.nextInt();
+
+        playerX = new HumanPlayer(scanner);
+        if(mode == 2){
+            playerO = new RandomAI();
+        }else{
+            playerO = new HumanPlayer(scanner);
+        }
+
             play();
 
             System.out.print("Play again ? (yes/no): ");
@@ -17,7 +33,6 @@ public class Game {
                 break;
             }
         }
-
     }
 
     public void play() {
@@ -28,18 +43,10 @@ public class Game {
             board.print();
             System.out.println("Player " + currentPlayer + "'s turn.");
 
-            int row,col;
-            while(true){
-                System.out.println("row (1-3): ");
-                row = scanner.nextInt() - 1;
-                System.out.println("column (1-3): ");
-                col = scanner.nextInt() - 1;
 
-                if(board.isValidMove(row,col)){
-                    break;
-                }
-                System.out.println("invalid move, try again");
-            }
+            Player current = (currentPlayer == 'X') ? playerX : playerO;
+            int[] move = current.getMove(board);
+            int row =move[0] , col = move[1];
             board.placeMove(row,col,currentPlayer);
 
 
@@ -53,7 +60,7 @@ public class Game {
                     System.out.println("it's a draw!");
                     break;
                 }
-                currentPlayer = (currentPlayer == 'X') ? '0' : 'X';
+                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         }
     }
 }

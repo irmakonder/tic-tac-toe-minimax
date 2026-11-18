@@ -1,0 +1,9 @@
+.background {
+    -fx-background-color: #FBEAF0;
+}
+
+.title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #993556;
+}

@@ -5,7 +5,22 @@ public class Game {
     private char currentPlayer;
     private final Scanner scanner = new Scanner(System.in);
 
-    public void play(){
+    public void start() {
+        while(true){
+            play();
+
+            System.out.print("Play again ? (yes/no): ");
+            String answer = scanner.next();
+
+            if(!answer.equalsIgnoreCase("yes")){
+                System.out.println("thanks for playing:)");
+                break;
+            }
+        }
+
+    }
+
+    public void play() {
         board = new Board();
         currentPlayer = 'X';
 
@@ -26,6 +41,7 @@ public class Game {
                 System.out.println("invalid move, try again");
             }
             board.placeMove(row,col,currentPlayer);
+
 
             if(board.checkWinner() != ' ') {
                 board.print();

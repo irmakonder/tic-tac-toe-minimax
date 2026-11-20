@@ -211,9 +211,9 @@ public class TicTacToeApp extends Application {
     }
     private String winnerMessage() {
         if(computer == null) {
-            return currentPlayer + "wins!";
+            return currentPlayer + " wins ! ";
         }
-        return (currentPlayer == 'X') ? "you win!" : "computer wins!";
+        return (currentPlayer == 'X') ? "you win ! " : "computer wins ! ";
     }
 
     private Scene createPinkScene(VBox content) {

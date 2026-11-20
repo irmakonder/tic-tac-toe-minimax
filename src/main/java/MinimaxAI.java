@@ -4,7 +4,7 @@ public class MinimaxAI implements Player {
 
     public MinimaxAI(char me){
         this.me = me;
-        this.opponent = (me == 'X') ? '0' : 'X';
+        this.opponent = (me == 'X') ? 'O' : 'X';
     }
 
     @Override

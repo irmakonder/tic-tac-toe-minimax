@@ -27,7 +27,6 @@ public class TicTacToeApp extends Application {
 
     private Stage stage;
     private String selectedMode;
-
     private Board board;
     private char currentPlayer;
     private boolean gameOver;
@@ -35,10 +34,20 @@ public class TicTacToeApp extends Application {
     private Label statusLabel;
     private Player computer;
     private PauseTransition computerDelay;
+    private int xWins;
+    private int oWins;
+    private int draws;
+    private Label xScoreLabel;
+    private Label oScoreLabel;
+    private Label drawScoreLabel;
+
 
     @Override
     public void start(Stage stage) {
         this.stage = stage;
+        xWins = 0;
+        oWins = 0;
+        draws = 0;
         stage.setTitle("Tic-Tac-Toe");
         stage.setResizable(false);
         stage.setScene(createStartScene());
@@ -112,6 +121,20 @@ public class TicTacToeApp extends Application {
         HBox topBar = new HBox(menuButton, spacer, modeLabel);
         topBar.setAlignment(Pos.CENTER_LEFT);
 
+        xScoreLabel = new Label();
+        oScoreLabel = new Label();
+        drawScoreLabel = new Label();
+
+        String xName = (computer == null) ? "X" : "you";
+        String oName = (computer == null) ? "O" : "computer";
+
+        HBox scoreRow = new HBox(10,
+                createScoreCard(xName, xScoreLabel),
+                createScoreCard("Draws", drawScoreLabel),
+                createScoreCard(oName, oScoreLabel));
+        scoreRow.setAlignment(Pos.CENTER);
+        updateScoreLabels();
+
         statusLabel = new Label();
         statusLabel.getStyleClass().add("status");
         updateStatus();
@@ -135,7 +158,7 @@ public class TicTacToeApp extends Application {
         playAgain.getStyleClass().add("new-game-button");
         playAgain.setOnAction(e -> resetGame());
 
-        VBox content = new VBox(16, topBar, statusLabel, grid, playAgain);
+        VBox content = new VBox(16, topBar, scoreRow ,statusLabel, grid, playAgain);
         content.setAlignment(Pos.TOP_CENTER);
         content.setPadding(new Insets(40, 30, 30, 30));
 
@@ -160,19 +183,24 @@ public class TicTacToeApp extends Application {
         cells[row][col].setText(String.valueOf(currentPlayer));
         cells[row][col].getStyleClass().add(currentPlayer == 'X' ? "x-mark" : "o-mark");
 
-        if (board.checkWinner() != ' ') {
-            statusLabel.setText(winnerMessage());
-            gameOver = true;
-            return;
-        }
-        if (board.isFull()) {
-            statusLabel.setText("It's a draw!");
-            gameOver = true;
-            return;
-        }
-
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-        updateStatus();
+       if(board.checkWinner() != ' ') {
+           if (currentPlayer == 'X') {
+               xWins++;
+           }else {
+               oWins++;
+           }
+           updateScoreLabels();
+           statusLabel.setText(winnerMessage());
+           gameOver = true;
+           return;
+       }
+       if(board.isFull()) {
+           draws++;
+           updateScoreLabels();
+           statusLabel.setText("it's a draw:( ");
+           gameOver = true;
+           return;
+       }
     }
 
     private void computerMove() {
@@ -221,7 +249,7 @@ public class TicTacToeApp extends Application {
         root.getStyleClass().add("background");
         addCornerBows(root);
 
-        Scene scene = new Scene(root, 420, 560);
+        Scene scene = new Scene(root, 420, 640);
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         return scene;
     }
@@ -255,5 +283,20 @@ public class TicTacToeApp extends Application {
             StackPane.setMargin(bow, new Insets(18));
             root.getChildren().add(bow);
         }
+    }
+    private VBox createScoreCard(String title,Label valueLabel ) {
+        Label titleLabel = new Label(title);
+        titleLabel.getStyleClass().add("score-title");
+        valueLabel.getStyleClass().add("score-value");
+
+        VBox card = new VBox(2 , titleLabel,valueLabel);
+        card.getStyleClass().add("score-card");
+        card.setAlignment(Pos.CENTER);
+        return card;
+    }
+    private void updateScoreLabels() {
+        xScoreLabel.setText(String.valueOf(xWins));
+        oScoreLabel.setText(String.valueOf(oWins));
+        drawScoreLabel.setText(String.valueOf(draws));
     }
 }

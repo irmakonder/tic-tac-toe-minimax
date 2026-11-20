@@ -97,3 +97,20 @@
 .o-mark {
     -fx-text-fill: #993556;
 }
+.score-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 6 0;
+    -fx-pref-width: 100px;
+}
+
+.score-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #D4537E;
+}
+
+.score-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #72243E;
+}

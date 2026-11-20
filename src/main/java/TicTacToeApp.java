@@ -1,3 +1,4 @@
+import javafx.animation.PauseTransition;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -17,6 +18,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.animation.PathTransition;
+import javafx.util.Duration;
 
 
 
@@ -30,6 +33,8 @@ public class TicTacToeApp extends Application {
     private boolean gameOver;
     private final Button[][] cells = new Button[3][3];
     private Label statusLabel;
+    private Player computer;
+    private PauseTransition computerDelay;
 
     @Override
     public void start(Stage stage) {
@@ -78,13 +83,26 @@ public class TicTacToeApp extends Application {
         board = new Board();
         currentPlayer = 'X';
         gameOver = false;
+
+        if(selectedMode.equals("easy")) {
+            computer =  new RandomAI();
+        }else if(selectedMode.equals("hard")) {
+            computer = new MinimaxAI('O');
+        }else {
+            computer = null;
+        }
         stage.setScene(createGameScene());
     }
 
     private Scene createGameScene() {
         Button menuButton = new Button("← Menu");
         menuButton.getStyleClass().add("menu-button");
-        menuButton.setOnAction(e -> stage.setScene(createStartScene()));
+        menuButton.setOnAction(e -> {
+            if (computerDelay != null) {
+                computerDelay.stop();
+            }
+            stage.setScene(createStartScene());
+        });
 
         Label modeLabel = new Label(selectedMode + " mode");
         modeLabel.getStyleClass().add("mode-label");
@@ -125,16 +143,25 @@ public class TicTacToeApp extends Application {
     }
 
     private void handleClick(int row, int col) {
-        if (gameOver || !board.isValidMove(row, col)) {
-            return;
-        }
+      boolean computerTurn = (computer != null && currentPlayer == 'O');
+      if(gameOver || computerTurn || !board.isValidMove(row,col)) {
+          return;
+      }
 
+      makeMove(row,col);
+
+      if(!gameOver && computer != null) {
+          computerMove();
+      }
+    }
+
+    private void makeMove(int row, int col) {
         board.placeMove(row, col, currentPlayer);
         cells[row][col].setText(String.valueOf(currentPlayer));
         cells[row][col].getStyleClass().add(currentPlayer == 'X' ? "x-mark" : "o-mark");
 
         if (board.checkWinner() != ' ') {
-            statusLabel.setText(currentPlayer + " wins!");
+            statusLabel.setText(winnerMessage());
             gameOver = true;
             return;
         }
@@ -148,7 +175,21 @@ public class TicTacToeApp extends Application {
         updateStatus();
     }
 
+    private void computerMove() {
+        statusLabel.setText("computer is thinking...");
+        computerDelay = new PauseTransition(Duration.millis(500));
+        computerDelay.setOnFinished(e -> {
+            int[] move = computer.getMove(board);
+            makeMove(move[0],move[1]);
+        });
+        computerDelay.play();
+    }
+
+
     private void resetGame() {
+        if(computerDelay != null) {
+            computerDelay.stop();
+        }
         board = new Board();
         currentPlayer = 'X';
         gameOver = false;
@@ -162,7 +203,17 @@ public class TicTacToeApp extends Application {
     }
 
     private void updateStatus() {
-        statusLabel.setText(currentPlayer + "'s turn");
+        if(computer == null) {
+            statusLabel.setText(currentPlayer + "'s turn");
+        }else {
+            statusLabel.setText("your turn ♡ ");
+        }
+    }
+    private String winnerMessage() {
+        if(computer == null) {
+            return currentPlayer + "wins!";
+        }
+        return (currentPlayer == 'X') ? "you win!" : "computer wins!";
     }
 
     private Scene createPinkScene(VBox content) {

@@ -20,6 +20,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.animation.PathTransition;
 import javafx.util.Duration;
+import javafx.animation.ScaleTransition;
 
 
 
@@ -182,25 +183,30 @@ public class TicTacToeApp extends Application {
         board.placeMove(row, col, currentPlayer);
         cells[row][col].setText(String.valueOf(currentPlayer));
         cells[row][col].getStyleClass().add(currentPlayer == 'X' ? "x-mark" : "o-mark");
+        playPopAnimation(cells[row][col]);
 
-       if(board.checkWinner() != ' ') {
-           if (currentPlayer == 'X') {
-               xWins++;
-           }else {
-               oWins++;
-           }
-           updateScoreLabels();
-           statusLabel.setText(winnerMessage());
-           gameOver = true;
-           return;
-       }
-       if(board.isFull()) {
-           draws++;
-           updateScoreLabels();
-           statusLabel.setText("it's a draw:( ");
-           gameOver = true;
-           return;
-       }
+        if (board.checkWinner() != ' ') {
+            highlightWinningLine();
+            if (currentPlayer == 'X') {
+                xWins++;
+            } else {
+                oWins++;
+            }
+            updateScoreLabels();
+            statusLabel.setText(winnerMessage());
+            gameOver = true;
+            return;
+        }
+        if (board.isFull()) {
+            draws++;
+            updateScoreLabels();
+            statusLabel.setText("It's a draw!");
+            gameOver = true;
+            return;
+        }
+
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        updateStatus();
     }
 
     private void computerMove() {
@@ -224,7 +230,7 @@ public class TicTacToeApp extends Application {
         for (Button[] rowCells : cells) {
             for (Button cell : rowCells) {
                 cell.setText("");
-                cell.getStyleClass().removeAll("x-mark", "o-mark");
+                cell.getStyleClass().removeAll("x-mark", "o-mark", "winning-cell");
             }
         }
         updateStatus();
@@ -239,9 +245,9 @@ public class TicTacToeApp extends Application {
     }
     private String winnerMessage() {
         if(computer == null) {
-            return currentPlayer + " wins ! ";
+            return currentPlayer + " wins ! ♡";
         }
-        return (currentPlayer == 'X') ? "you win ! " : "computer wins ! ";
+        return (currentPlayer == 'X') ? "you win ! ♡" : "computer wins ! ";
     }
 
     private Scene createPinkScene(VBox content) {
@@ -298,5 +304,24 @@ public class TicTacToeApp extends Application {
         xScoreLabel.setText(String.valueOf(xWins));
         oScoreLabel.setText(String.valueOf(oWins));
         drawScoreLabel.setText(String.valueOf(draws));
+    }
+    private void highlightWinningLine() {
+        int [][] line = board.getWinningLine();
+        if(line == null) {
+            return;
+        }
+        for(int [] pos : line ) {
+            cells[pos[0]][pos[1]].getStyleClass().add("winning-cell");
+        }
+    }
+
+    private void playPopAnimation(Button cell) {
+        ScaleTransition pop = new ScaleTransition(Duration.millis(150),cell);
+        pop.setFromX(0.8);
+        pop.setFromX(0.8);
+        pop.setToX(1);
+        pop.setToY(1);
+        pop.play();
+
     }
 }

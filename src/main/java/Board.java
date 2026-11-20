@@ -72,6 +72,25 @@
      public void undoMove(int row,int col) {
         grid [row][col] = ' ';
      }
+     public int[][] getWinningLine() {
+         for (int i = 0; i < 3; i++) {
+             if (grid[i][0] != ' ' && grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
+                 return new int[][]{{i, 0}, {i, 1}, {i, 2}};
+             }
+         }
+         for (int j = 0; j < 3; j++) {
+             if (grid[0][j] != ' ' && grid[0][j] == grid[1][j] && grid[1][j] == grid[2][j]) {
+                 return new int[][]{{0, j}, {1, j}, {2, j}};
+             }
+         }
+         if (grid[0][0] != ' ' && grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) {
+             return new int[][]{{0, 0}, {1, 1}, {2, 2}};
+         }
+         if (grid[0][2] != ' ' && grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0]) {
+             return new int[][]{{0, 2}, {1, 1}, {2, 0}};
+         }
+         return null;
+     }
  }
 
 

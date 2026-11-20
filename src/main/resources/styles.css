@@ -114,3 +114,14 @@
     -fx-font-weight: bold;
     -fx-text-fill: #72243E;
 }
+.cell.winning-cell,
+.cell.winning-cell:hover {
+    -fx-background-color: #D4537E;
+    -fx-border-color: #D4537E;
+    -fx-text-fill: white;
+}
+
+.menu-button:hover {
+    -fx-text-fill: #993556;
+    -fx-underline: true;
+}

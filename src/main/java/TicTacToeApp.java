@@ -90,6 +90,10 @@ public class TicTacToeApp extends Application {
     }
 
     private void startGame() {
+        xWins = 0;
+        oWins = 0;
+        draws  = 0;
+
         board = new Board();
         currentPlayer = 'X';
         gameOver = false;
@@ -114,12 +118,20 @@ public class TicTacToeApp extends Application {
             stage.setScene(createStartScene());
         });
 
-        Label modeLabel = new Label(selectedMode + " mode");
-        modeLabel.getStyleClass().add("mode-label");
+       Region spacer = new Region();
+       HBox.setHgrow(spacer , Priority.ALWAYS);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox topBar = new HBox(menuButton, spacer, modeLabel);
+        HBox topBar;
+        if (computer == null) {
+            Label modeLabel = new Label("2 players");
+            modeLabel.getStyleClass().add("mode-label");
+            topBar = new HBox(menuButton, spacer, modeLabel);
+        } else {
+            Button modeSwitch = new Button(selectedMode + " ⇄");
+            modeSwitch.getStyleClass().addAll("mode-label", "mode-switch");
+            modeSwitch.setOnAction(e -> switchDifficulty(modeSwitch));
+            topBar = new HBox(menuButton, spacer, modeSwitch);
+        }
         topBar.setAlignment(Pos.CENTER_LEFT);
 
         xScoreLabel = new Label();
@@ -322,6 +334,18 @@ public class TicTacToeApp extends Application {
         pop.setToX(1);
         pop.setToY(1);
         pop.play();
+
+    }
+    private void switchDifficulty(Button modeSwitch) {
+        if(selectedMode.equalsIgnoreCase("Easy")) {
+            selectedMode = "Hard";
+            computer = new MinimaxAI('O');
+        } else {
+            selectedMode = "Easy";
+            computer = new RandomAI();
+        }
+        modeSwitch.setText(selectedMode + "  ⇄ ");
+        resetGame();
 
     }
 }

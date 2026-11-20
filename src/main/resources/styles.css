@@ -135,3 +135,10 @@
     -fx-background-color: #FDF3F7;
     -fx-border-color: #ED93B1;
 }
+.mode-switch {
+    -fx-cursor: hand;
+}
+
+.mode-switch:hover {
+    -fx-background-color: #E580A3;
+}

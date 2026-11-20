@@ -84,9 +84,9 @@ public class TicTacToeApp extends Application {
         currentPlayer = 'X';
         gameOver = false;
 
-        if(selectedMode.equals("easy")) {
+        if(selectedMode.equals("Easy")) {
             computer =  new RandomAI();
-        }else if(selectedMode.equals("hard")) {
+        }else if(selectedMode.equals("Hard")) {
             computer = new MinimaxAI('O');
         }else {
             computer = null;

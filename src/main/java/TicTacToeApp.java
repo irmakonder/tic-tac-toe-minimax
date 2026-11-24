@@ -22,11 +22,15 @@ import javafx.animation.PathTransition;
 import javafx.util.Duration;
 import javafx.animation.ScaleTransition;
 import javafx.scene.control.TextField;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.List;
+import javafx.scene.text.Font;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.transform.Scale;
 
 
 
@@ -57,6 +61,10 @@ public class TicTacToeApp extends Application {
 
     @Override
     public void start(Stage stage) {
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Nunito-Bold.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Nunito-ExtraBold.ttf"), 14);
+        Font.loadFont(getClass().getResourceAsStream("/fonts/Nunito-Black.ttf"), 14);
+
         this.stage = stage;
         xWins = 0;
         oWins = 0;
@@ -76,12 +84,14 @@ public class TicTacToeApp extends Application {
         subtitle.getStyleClass().add("subtitle");
 
         TextField nameField = new TextField(playerName);
-        nameField.setPromptText("your name (for high scores)");
+        nameField.setPromptText("your name ");
         nameField.getStyleClass().add("name-field");
-        nameField.setMaxWidth(220);
+
+        Label modeTitle = new Label("choose a mode");
+        modeTitle.getStyleClass().add("section-label");
 
         ToggleGroup modes = new ToggleGroup();
-        ToggleButton twoPlayers = createModeButton("2 players", modes);
+        ToggleButton twoPlayers = createModeButton("two-players", modes);
         ToggleButton easy = createModeButton("Easy", modes);
         ToggleButton hard = createModeButton("Hard", modes);
         hard.setSelected(true);
@@ -101,14 +111,20 @@ public class TicTacToeApp extends Application {
             startGame();
         });
 
-        Button highScores = new Button("HIGHSCORES");
+        Button highScores = new Button("High scores");
         highScores.getStyleClass().add("secondary-button");
-        highScores.setOnAction(e -> {stage.setScene(createHighScoresScene());});
+        highScores.setOnAction(e -> stage.setScene(createHighScoresScene()));
 
-        VBox content = new VBox(8, createBow(1.6), title , subtitle , nameField , modeBox , highScores , newGame);
+        VBox card = new VBox(10, nameField, modeTitle, modeBox, newGame, highScores);
+        card.getStyleClass().add("menu-card");
+        card.setAlignment(Pos.CENTER);
+        card.setMaxWidth(Region.USE_PREF_SIZE);
+        VBox.setMargin(modeTitle, new Insets(6, 0, 0, 0));
+        VBox.setMargin(newGame, new Insets(8, 0, 0, 0));
+
+        VBox content = new VBox(4, createBow(1.1), title, subtitle, card);
         content.setAlignment(Pos.CENTER);
-        VBox.setMargin(nameField, new Insets(16, 0, 0, 0));
-        VBox.setMargin(modeBox, new Insets(12, 0, 16, 0));
+        VBox.setMargin(card, new Insets(16, 0, 0, 0));
 
         return createPinkScene(content);
     }
@@ -321,17 +337,45 @@ public class TicTacToeApp extends Application {
     }
 
     private Group createBow(double size) {
-        double w = 40 * size;
-        double h = 24 * size;
+        SVGPath leftTail = bowPart("M27 18 L17 40 L22.5 37 L25 42.5 L32 19 Z", "#E580A3");
+        SVGPath rightTail = bowPart("M33 18 L43 40 L37.5 37 L35 42.5 L28 19 Z", "#E580A3");
+        SVGPath leftLoop = bowPart("M30 16 C22 3, 5 1, 3 12 C1 23, 17 27, 30 16 Z", "#ED93B1");
+        SVGPath rightLoop = bowPart("M30 16 C38 3, 55 1, 57 12 C59 23, 43 27, 30 16 Z", "#ED93B1");
+        SVGPath leftFold = bowPart("M30 16 C24 9, 13 8, 12 13.5 C11.5 19, 21 20.5, 30 16 Z", "#D4537E");
+        SVGPath rightFold = bowPart("M30 16 C36 9, 47 8, 48 13.5 C48.5 19, 39 20.5, 30 16 Z", "#D4537E");
+        leftFold.setOpacity(0.55);
+        rightFold.setOpacity(0.55);
 
-        Polygon left = new Polygon(0, 0, 0, h, w / 2, h / 2);
-        Polygon right = new Polygon(w, 0, w, h, w / 2, h / 2);
-        left.setFill(Color.web("#ED93B1"));
-        right.setFill(Color.web("#ED93B1"));
+        SVGPath leftShine = bowShine("M9 9 C12 6, 17 6, 20 8");
+        SVGPath rightShine = bowShine("M40 8 C43 6, 48 6, 51 9");
 
-        Circle knot = new Circle(w / 2, h / 2, 4.5 * size, Color.web("#D4537E"));
+        Rectangle knot = new Rectangle(25.5, 10.5, 9, 11);
+        knot.setArcWidth(7);
+        knot.setArcHeight(7);
+        knot.setFill(Color.web("#C2456F"));
 
-        return new Group(left, right, knot);
+        Group bow = new Group(leftTail, rightTail, leftLoop, rightLoop,
+                leftFold, rightFold, leftShine, rightShine, knot);
+        bow.getTransforms().add(new Scale(size, size));
+        return new Group(bow);
+    }
+
+    private SVGPath bowPart(String path, String color) {
+        SVGPath shape = new SVGPath();
+        shape.setContent(path);
+        shape.setFill(Color.web(color));
+        return shape;
+    }
+
+    private SVGPath bowShine(String path) {
+        SVGPath line = new SVGPath();
+        line.setContent(path);
+        line.setFill(null);
+        line.setStroke(Color.WHITE);
+        line.setStrokeWidth(1.4);
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setOpacity(0.7);
+        return line;
     }
 
     private void addCornerBows(StackPane root) {

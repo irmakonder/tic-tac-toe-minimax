@@ -1,43 +1,81 @@
+.root {
+    -fx-font-family: "Nunito";
+    -fx-font-weight: bold;
+}
+
 .background {
     -fx-background-color: #FBEAF0;
 }
 
+/* start scene */
+
 .title {
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
+    -fx-font-size: 34px;
+    -fx-font-weight: 900;
     -fx-text-fill: #993556;
 }
+
 .subtitle {
     -fx-font-size: 14px;
     -fx-text-fill: #D4537E;
 }
 
-.mode-button {
-    -fx-pref-width: 170px;
-    -fx-padding: 8;
-    -fx-font-size: 14px;
+.section-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #D4537E;
+}
+
+.menu-card {
+    -fx-background-color: white;
+    -fx-background-radius: 28;
+    -fx-padding: 22 24;
+    -fx-effect: dropshadow(gaussian, rgba(212, 83, 126, 0.22), 24, 0, 0, 6);
+}
+
+.name-field {
+    -fx-pref-width: 240px;
+    -fx-max-width: 240px;
+    -fx-pref-height: 42px;
+    -fx-font-size: 15px;
     -fx-text-fill: #72243E;
+    -fx-prompt-text-fill: #ED93B1;
+    -fx-alignment: center;
     -fx-background-color: white;
     -fx-background-radius: 999;
     -fx-border-color: #F4C0D1;
-    -fx-border-width: 1.5;
+    -fx-border-width: 2;
     -fx-border-radius: 999;
+}
+
+.name-field:focused {
+    -fx-border-color: #D4537E;
+}
+
+.mode-button {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 42px;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #72243E;
+    -fx-background-color: #FBEAF0;
+    -fx-background-radius: 999;
     -fx-cursor: hand;
 }
 
 .mode-button:hover {
-    -fx-background-color: #FDF3F7;
+    -fx-background-color: #F8DCE6;
 }
 
 .mode-button:selected {
     -fx-background-color: #ED93B1;
-    -fx-border-color: #ED93B1;
     -fx-text-fill: #4B1528;
 }
 
 .new-game-button {
-    -fx-padding: 10 28;
+    -fx-pref-width: 240px;
+    -fx-pref-height: 42px;
     -fx-font-size: 15px;
+    -fx-font-weight: 800;
     -fx-text-fill: white;
     -fx-background-color: #D4537E;
     -fx-background-radius: 999;
@@ -47,6 +85,27 @@
 .new-game-button:hover {
     -fx-background-color: #C2456F;
 }
+
+.secondary-button {
+    -fx-pref-width: 240px;
+    -fx-pref-height: 42px;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #993556;
+    -fx-background-color: white;
+    -fx-background-radius: 999;
+    -fx-border-color: #ED93B1;
+    -fx-border-width: 2;
+    -fx-border-radius: 999;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #FDF3F7;
+}
+
+/* game screen */
+
 .menu-button {
     -fx-background-color: white;
     -fx-border-color: #F4C0D1;
@@ -56,8 +115,12 @@
     -fx-padding: 5 14;
     -fx-text-fill: #993556;
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
     -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #FDF3F7;
+    -fx-border-color: #ED93B1;
 }
 
 .mode-label {
@@ -66,12 +129,42 @@
     -fx-padding: 5 14;
     -fx-text-fill: #4B1528;
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
+}
+
+.mode-switch {
+    -fx-cursor: hand;
+}
+
+.mode-switch:hover {
+    -fx-background-color: #E580A3;
+}
+
+.score-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 6 0;
+    -fx-pref-width: 100px;
+}
+
+.score-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #D4537E;
+}
+
+.score-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #72243E;
+}
+
+.points-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #D4537E;
 }
 
 .status {
     -fx-font-size: 20px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 900;
     -fx-text-fill: #993556;
 }
 
@@ -87,7 +180,7 @@
     -fx-min-width: 88px;
     -fx-min-height: 88px;
     -fx-font-size: 38px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 900;
     -fx-background-color: #FBEAF0;
     -fx-background-radius: 16;
     -fx-border-color: #F4C0D1;
@@ -107,23 +200,7 @@
 .o-mark {
     -fx-text-fill: #993556;
 }
-.score-card {
-    -fx-background-color: white;
-    -fx-background-radius: 14;
-    -fx-padding: 6 0;
-    -fx-pref-width: 100px;
-}
 
-.score-title {
-    -fx-font-size: 12px;
-    -fx-text-fill: #D4537E;
-}
-
-.score-value {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #72243E;
-}
 .cell.winning-cell,
 .cell.winning-cell:hover {
     -fx-background-color: #D4537E;
@@ -131,55 +208,8 @@
     -fx-text-fill: white;
 }
 
-.menu-button:hover {
-    -fx-background-color: #FDF3F7;
-    -fx-border-color: #ED93B1;
-}
-.mode-switch {
-    -fx-cursor: hand;
-}
+/* highscores */
 
-.mode-switch:hover {
-    -fx-background-color: #E580A3;
-}
-.name-field {
-    -fx-background-color: white;
-    -fx-background-radius: 999;
-    -fx-border-color: #F4C0D1;
-    -fx-border-width: 1.5;
-    -fx-border-radius: 999;
-    -fx-padding: 8 16;
-    -fx-font-size: 14px;
-    -fx-text-fill: #72243E;
-    -fx-prompt-text-fill: #ED93B1;
-    -fx-alignment: center;
-}
-
-.name-field:focused {
-    -fx-border-color: #D4537E;
-}
-
-.points-label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #D4537E;
-}
-.secondary-button {
-    -fx-pref-width: 170px;
-    -fx-padding: 8;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #993556;
-    -fx-background-color: white;
-    -fx-background-radius: 999;
-    -fx-border-color: #ED93B1;
-    -fx-border-width: 1.5;
-    -fx-border-radius: 999;
-    -fx-cursor: hand;
-}
-
-.secondary-button:hover {
-    -fx-background-color: #FDF3F7;
-}
 .score-row {
     -fx-background-color: white;
     -fx-background-radius: 12;
@@ -194,7 +224,6 @@
 
 .row-rank {
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
     -fx-text-fill: #D4537E;
 }
 
@@ -205,7 +234,7 @@
 
 .row-points {
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 900;
     -fx-text-fill: #72243E;
 }
 

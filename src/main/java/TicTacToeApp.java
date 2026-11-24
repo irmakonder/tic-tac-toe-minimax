@@ -22,8 +22,11 @@ import javafx.animation.PathTransition;
 import javafx.util.Duration;
 import javafx.animation.ScaleTransition;
 import javafx.scene.control.TextField;
+
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.List;
 
 
 
@@ -98,7 +101,11 @@ public class TicTacToeApp extends Application {
             startGame();
         });
 
-        VBox content = new VBox(8, createBow(1.6), title, subtitle, nameField, modeBox, newGame);
+        Button highScores = new Button("HIGHSCORES");
+        highScores.getStyleClass().add("secondary-button");
+        highScores.setOnAction(e -> {stage.setScene(createHighScoresScene());});
+
+        VBox content = new VBox(8, createBow(1.6), title , subtitle , nameField , modeBox , highScores , newGame);
         content.setAlignment(Pos.CENTER);
         VBox.setMargin(nameField, new Insets(16, 0, 0, 0));
         VBox.setMargin(modeBox, new Insets(12, 0, 16, 0));
@@ -412,6 +419,64 @@ public class TicTacToeApp extends Application {
         String mode = String.join(" + ", modesPlayed);
         leaderboard.add(new ScoreEntry(playerName, sessionPoints, mode));
         System.out.println("saved: " + leaderboard.getEntries());
+    }
 
+    private Scene createHighScoresScene() {
+        Label title = new Label("HIGHSCORES");
+        title.getStyleClass().add("title");
+
+        VBox list = new VBox(6);
+        list.setAlignment(Pos.TOP_CENTER);
+
+        List<ScoreEntry> entries = leaderboard.getEntries();
+            if (entries.isEmpty()) {
+                Label empty = new Label("No scores yet. Enter your name and play!");
+                empty.getStyleClass().add("subtitle");
+                list.getChildren().add(empty);
+            } else {
+                for (int i = 0; i < entries.size(); i++) {
+                    list.getChildren().add(createScoreRow(i + 1, entries.get(i)));
+                }
+            }
+
+            Button back = new Button("← Menu");
+            back.getStyleClass().add("menu-button");
+            back.setOnAction(e -> stage.setScene(createStartScene()));
+
+            VBox content = new VBox(12, createBow(1.2), title, list, back);
+            content.setAlignment(Pos.TOP_CENTER);
+            content.setPadding(new Insets(40, 30, 30, 30));
+
+            return createPinkScene(content);
+        }
+
+        private HBox createScoreRow(int rank, ScoreEntry entry) {
+            Label rankLabel = new Label(rank + ".");
+            rankLabel.getStyleClass().add("row-rank");
+            rankLabel.setMinWidth(26);
+
+            Label nameLabel = new Label(entry.name());
+            nameLabel.getStyleClass().add("row-name");
+
+            Label pointsLabel = new Label(entry.points() + " pts");
+            pointsLabel.getStyleClass().add("row-points");
+
+            Label modeLabel = new Label(entry.mode());
+            modeLabel.getStyleClass().add("row-mode");
+            modeLabel.setMinWidth(90);
+            modeLabel.setAlignment(Pos.CENTER_RIGHT);
+
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            HBox row = new HBox(10, rankLabel, nameLabel, spacer, pointsLabel, modeLabel);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getStyleClass().add("score-row");
+            if (rank <= 3) {
+                row.getStyleClass().add("top-three");
+            }
+            return row;
     }
 }
+
+

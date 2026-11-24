@@ -163,3 +163,53 @@
     -fx-font-size: 13px;
     -fx-text-fill: #D4537E;
 }
+.secondary-button {
+    -fx-pref-width: 170px;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #993556;
+    -fx-background-color: white;
+    -fx-background-radius: 999;
+    -fx-border-color: #ED93B1;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 999;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #FDF3F7;
+}
+.score-row {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 7 14;
+    -fx-pref-width: 340px;
+    -fx-max-width: 340px;
+}
+
+.score-row.top-three {
+    -fx-background-color: #F4C0D1;
+}
+
+.row-rank {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #D4537E;
+}
+
+.row-name {
+    -fx-font-size: 14px;
+    -fx-text-fill: #72243E;
+}
+
+.row-points {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #72243E;
+}
+
+.row-mode {
+    -fx-font-size: 12px;
+    -fx-text-fill: #993556;
+}

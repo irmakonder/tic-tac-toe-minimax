@@ -21,6 +21,9 @@ import javafx.scene.control.Button;
 import javafx.animation.PathTransition;
 import javafx.util.Duration;
 import javafx.animation.ScaleTransition;
+import javafx.scene.control.TextField;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 
@@ -41,6 +44,12 @@ public class TicTacToeApp extends Application {
     private Label xScoreLabel;
     private Label oScoreLabel;
     private Label drawScoreLabel;
+    private final Leaderboard leaderboard = new Leaderboard();
+    private String playerName = "";
+    private int sessionPoints;
+    private boolean sessionActive;
+    private final Set<String> modesPlayed = new LinkedHashSet<>();
+    private Label pointsLabel;
 
 
     @Override
@@ -53,6 +62,7 @@ public class TicTacToeApp extends Application {
         stage.setResizable(false);
         stage.setScene(createStartScene());
         stage.show();
+        stage.setOnCloseRequest(e -> saveSession());
     }
 
     private Scene createStartScene() {
@@ -61,6 +71,11 @@ public class TicTacToeApp extends Application {
 
         Label subtitle = new Label("can you beat the computer?");
         subtitle.getStyleClass().add("subtitle");
+
+        TextField nameField = new TextField(playerName);
+        nameField.setPromptText("your name (for high scores)");
+        nameField.getStyleClass().add("name-field");
+        nameField.setMaxWidth(220);
 
         ToggleGroup modes = new ToggleGroup();
         ToggleButton twoPlayers = createModeButton("2 players", modes);
@@ -78,31 +93,38 @@ public class TicTacToeApp extends Application {
             if (selected == null) {
                 return;
             }
+            playerName = cleanName(nameField.getText());
             selectedMode = selected.getText();
             startGame();
         });
 
-        VBox content = new VBox(8, createBow(1.6), title, subtitle, modeBox, newGame);
+        VBox content = new VBox(8, createBow(1.6), title, subtitle, nameField, modeBox, newGame);
         content.setAlignment(Pos.CENTER);
-        VBox.setMargin(modeBox, new Insets(24, 0, 16, 0));
+        VBox.setMargin(nameField, new Insets(16, 0, 0, 0));
+        VBox.setMargin(modeBox, new Insets(12, 0, 16, 0));
 
         return createPinkScene(content);
     }
 
     private void startGame() {
+        sessionPoints = 0;
+        sessionActive = true;
+        modesPlayed.clear();
+        modesPlayed.add(selectedMode);
+
         xWins = 0;
         oWins = 0;
-        draws  = 0;
+        draws = 0;
 
         board = new Board();
         currentPlayer = 'X';
         gameOver = false;
 
-        if(selectedMode.equals("Easy")) {
-            computer =  new RandomAI();
-        }else if(selectedMode.equals("Hard")) {
+        if (selectedMode.equals("Easy")) {
+            computer = new RandomAI();
+        } else if (selectedMode.equals("Hard")) {
             computer = new MinimaxAI('O');
-        }else {
+        } else {
             computer = null;
         }
         stage.setScene(createGameScene());
@@ -115,11 +137,12 @@ public class TicTacToeApp extends Application {
             if (computerDelay != null) {
                 computerDelay.stop();
             }
+            saveSession();
             stage.setScene(createStartScene());
         });
 
-       Region spacer = new Region();
-       HBox.setHgrow(spacer , Priority.ALWAYS);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         HBox topBar;
         if (computer == null) {
@@ -148,6 +171,12 @@ public class TicTacToeApp extends Application {
         scoreRow.setAlignment(Pos.CENTER);
         updateScoreLabels();
 
+        pointsLabel = new Label();
+        pointsLabel.getStyleClass().add("points-label");
+        pointsLabel.setVisible(!playerName.isEmpty());
+        pointsLabel.setManaged(!playerName.isEmpty());
+        updatePointsLabel();
+
         statusLabel = new Label();
         statusLabel.getStyleClass().add("status");
         updateStatus();
@@ -171,7 +200,7 @@ public class TicTacToeApp extends Application {
         playAgain.getStyleClass().add("new-game-button");
         playAgain.setOnAction(e -> resetGame());
 
-        VBox content = new VBox(16, topBar, scoreRow ,statusLabel, grid, playAgain);
+        VBox content = new VBox(16, topBar, scoreRow, pointsLabel, statusLabel, grid, playAgain);
         content.setAlignment(Pos.TOP_CENTER);
         content.setPadding(new Insets(40, 30, 30, 30));
 
@@ -179,16 +208,16 @@ public class TicTacToeApp extends Application {
     }
 
     private void handleClick(int row, int col) {
-      boolean computerTurn = (computer != null && currentPlayer == 'O');
-      if(gameOver || computerTurn || !board.isValidMove(row,col)) {
-          return;
-      }
+        boolean computerTurn = (computer != null && currentPlayer == 'O');
+        if (gameOver || computerTurn || !board.isValidMove(row, col)) {
+            return;
+        }
 
-      makeMove(row,col);
+        makeMove(row, col);
 
-      if(!gameOver && computer != null) {
-          computerMove();
-      }
+        if (!gameOver && computer != null) {
+            computerMove();
+        }
     }
 
     private void makeMove(int row, int col) {
@@ -201,6 +230,7 @@ public class TicTacToeApp extends Application {
             highlightWinningLine();
             if (currentPlayer == 'X') {
                 xWins++;
+                sessionPoints += selectedMode.equalsIgnoreCase("Hard") ? 5 : 1;
             } else {
                 oWins++;
             }
@@ -211,12 +241,15 @@ public class TicTacToeApp extends Application {
         }
         if (board.isFull()) {
             draws++;
+            if (selectedMode.equalsIgnoreCase("Hard")) {
+                sessionPoints += 3;
+            }
             updateScoreLabels();
+            updatePointsLabel();
             statusLabel.setText("It's a draw!");
             gameOver = true;
             return;
         }
-
         currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         updateStatus();
     }
@@ -226,14 +259,14 @@ public class TicTacToeApp extends Application {
         computerDelay = new PauseTransition(Duration.millis(500));
         computerDelay.setOnFinished(e -> {
             int[] move = computer.getMove(board);
-            makeMove(move[0],move[1]);
+            makeMove(move[0], move[1]);
         });
         computerDelay.play();
     }
 
 
     private void resetGame() {
-        if(computerDelay != null) {
+        if (computerDelay != null) {
             computerDelay.stop();
         }
         board = new Board();
@@ -249,14 +282,15 @@ public class TicTacToeApp extends Application {
     }
 
     private void updateStatus() {
-        if(computer == null) {
+        if (computer == null) {
             statusLabel.setText(currentPlayer + "'s turn");
-        }else {
+        } else {
             statusLabel.setText("your turn ♡ ");
         }
     }
+
     private String winnerMessage() {
-        if(computer == null) {
+        if (computer == null) {
             return currentPlayer + " wins ! ♡";
         }
         return (currentPlayer == 'X') ? "you win ! ♡" : "computer wins ! ";
@@ -302,33 +336,36 @@ public class TicTacToeApp extends Application {
             root.getChildren().add(bow);
         }
     }
-    private VBox createScoreCard(String title,Label valueLabel ) {
+
+    private VBox createScoreCard(String title, Label valueLabel) {
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("score-title");
         valueLabel.getStyleClass().add("score-value");
 
-        VBox card = new VBox(2 , titleLabel,valueLabel);
+        VBox card = new VBox(2, titleLabel, valueLabel);
         card.getStyleClass().add("score-card");
         card.setAlignment(Pos.CENTER);
         return card;
     }
+
     private void updateScoreLabels() {
         xScoreLabel.setText(String.valueOf(xWins));
         oScoreLabel.setText(String.valueOf(oWins));
         drawScoreLabel.setText(String.valueOf(draws));
     }
+
     private void highlightWinningLine() {
-        int [][] line = board.getWinningLine();
-        if(line == null) {
+        int[][] line = board.getWinningLine();
+        if (line == null) {
             return;
         }
-        for(int [] pos : line ) {
+        for (int[] pos : line) {
             cells[pos[0]][pos[1]].getStyleClass().add("winning-cell");
         }
     }
 
     private void playPopAnimation(Button cell) {
-        ScaleTransition pop = new ScaleTransition(Duration.millis(150),cell);
+        ScaleTransition pop = new ScaleTransition(Duration.millis(150), cell);
         pop.setFromX(0.8);
         pop.setFromX(0.8);
         pop.setToX(1);
@@ -336,16 +373,45 @@ public class TicTacToeApp extends Application {
         pop.play();
 
     }
+
     private void switchDifficulty(Button modeSwitch) {
-        if(selectedMode.equalsIgnoreCase("Easy")) {
+        if (selectedMode.equalsIgnoreCase("Easy")) {
             selectedMode = "Hard";
             computer = new MinimaxAI('O');
         } else {
             selectedMode = "Easy";
             computer = new RandomAI();
         }
+        modesPlayed.add(selectedMode);
         modeSwitch.setText(selectedMode + "  ⇄ ");
         resetGame();
+
+    }
+
+    private String cleanName(String raw) {
+        String name = raw.trim().replace(";", "").replace("\n", "");
+        if (name.length() > 12) {
+            name = name.substring(0, 12);
+        }
+        return name;
+    }
+
+    private void updatePointsLabel() {
+        pointsLabel.setText("♡ " + playerName + " · " + sessionPoints + " points");
+
+    }
+
+    private void saveSession() {
+        if (!sessionActive) {
+            return;
+        }
+        sessionActive = false;
+        if (playerName.isEmpty()) {
+            return;
+        }
+        String mode = String.join(" + ", modesPlayed);
+        leaderboard.add(new ScoreEntry(playerName, sessionPoints, mode));
+        System.out.println("saved: " + leaderboard.getEntries());
 
     }
 }
